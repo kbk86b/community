@@ -11,7 +11,8 @@ import sys
 import threading
 import time
 
-ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR if (SCRIPT_DIR / "sky_watch.star").exists() else SCRIPT_DIR.parent
 APP = ROOT / "app" if (ROOT / "app").exists() else ROOT
 PIXLET = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "tools" / "pixlet.exe"
 SOURCE = (APP / "sky_watch.star").read_text(encoding="utf-8")

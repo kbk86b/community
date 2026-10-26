@@ -59,7 +59,7 @@ synthetic HTTP cases using a temporary loopback server. Python 3.10+ is needed
 only to run these tests; the deployed app runs in Starlark without Python.
 
 ```sh
-python tests/run_tests.py /path/to/pixlet
+python run_tests.py /path/to/pixlet
 ```
 
 Tests do not use a Tidbyt account, token, saved tracker configuration, or an
