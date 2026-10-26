@@ -23,6 +23,180 @@ WHITE = "#ebf6ff"
 MUTED = "#98abc4"
 RED = "#ff6b6b"
 
+# Original 24x15 pixel silhouettes; family illustrations, not scale drawings.
+ICON_PIXELS = {
+    "airliner": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "..........21112.........",
+        "........222111222.......",
+        ".......22221112222......",
+        ".....22322211122322.....",
+        "....22232..111..32222...",
+        "..2222.3...111..3.2222..",
+        "..2......221112......2..",
+        "........222111222.......",
+        "......2222..1..222......",
+        "......2.....1....2......",
+    ],
+    "widebody": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "..........11111.........",
+        "..........11111.........",
+        ".........2111112........",
+        ".......2221111122.......",
+        "......2222111112222.....",
+        "....23222211111222322...",
+        "..222322..11111.223222..",
+        "222223....11111...3.2222",
+        "2........221112........2",
+        "........222111222.......",
+        "......2222..1..222......",
+        "......2.....1....2......",
+    ],
+    "jumbo": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "..........11111.........",
+        "..........11111.........",
+        ".........2111112........",
+        ".......2221111122.......",
+        "......2222111112222.....",
+        "....32232211111232232...",
+        "..223223..11111.322322..",
+        "22223..3..11111.3..32222",
+        "2........221112........2",
+        "........222111222.......",
+        "......2222..1..222......",
+        "......2.....1....2......",
+    ],
+    "prop": [
+        "............1...........",
+        "........333313333.......",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "..22222222211122222222..",
+        "..22222222211122222222..",
+        "..22222222211122222222..",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "........22211122........",
+        "........22211122........",
+        "........................",
+    ],
+    "twinprop": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "....333....111...333....",
+        ".....1.....111....1.....",
+        "..22212222211122221222..",
+        "..22212222211122221222..",
+        "..22212222211122221222..",
+        ".....1.....111....1.....",
+        ".....1.....111....1.....",
+        "...........111..........",
+        "...........111..........",
+        "........22211122........",
+        "........22211122........",
+        "........................",
+    ],
+    "fourprop": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "..333.333..111.333.333..",
+        "...1...1...111..1...1...",
+        "..21222122211122122212..",
+        "..21222122211122122212..",
+        "..21222122211122122212..",
+        "...1...1...111..1...1...",
+        "...1...1...111..1...1...",
+        "...........111..........",
+        "...........111..........",
+        "........22211122........",
+        "........22211122........",
+        "........................",
+    ],
+    "bizjet": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "..........21112.........",
+        "........222111222.......",
+        ".......22221112222......",
+        ".....22222211122222.....",
+        "....222223.1113.22222...",
+        "..2222...3.1113...2222..",
+        "..2......321113......2..",
+        "........222111222.......",
+        "......2222..1..222......",
+        "......2.....1....2......",
+    ],
+    "fighter": [
+        "............2...........",
+        "............1...........",
+        "...........212..........",
+        "...........111..........",
+        "...........111..........",
+        "..........21112.........",
+        "..........21112.........",
+        ".........2211122........",
+        ".......22221112222......",
+        "......2222211122222.....",
+        ".....222222111222222....",
+        "...2222222211122222222..",
+        "..2......2211122......2.",
+        ".........2211122........",
+        ".........2232322........",
+    ],
+    "generic": [
+        "............1...........",
+        "............1...........",
+        "...........111..........",
+        "...........111..........",
+        "...........111..........",
+        "..........21112.........",
+        "........222111222.......",
+        ".......22221112222......",
+        ".....22222211122222.....",
+        "....22222..111..22222...",
+        "..2222.....111....2222..",
+        "..2......221112......2..",
+        "........222111222.......",
+        "......2222..1..222......",
+        "......2.....1....2......",
+    ],
+    "helicopter": [
+        "........................",
+        "..33333333333333333333..",
+        "............1...........",
+        "............1...........",
+        ".3..........1...........",
+        ".3..........1...........",
+        ".3........111111111.....",
+        ".3222222222111111111....",
+        ".322222222211111111111..",
+        ".3........1211111111111.",
+        "..........11111111.1....",
+        "............1......1....",
+        "............1......1....",
+        ".........22222222222222.",
+        "........................",
+    ],
+}
+
 def number(value):
     """Accept finite numbers and short decimal strings without raising errors."""
     if type(value) in ("int", "float"):
@@ -163,16 +337,49 @@ def heading_text(aircraft):
 def short_text(value, fallback, limit = 20):
     return value.strip().upper()[:limit] if type(value) == "string" and value.strip() else fallback
 
-def fitted_text(text, color, font = "tb-8"):
+def aircraft_kind(aircraft):
+    plane_type = short_text(aircraft.get("t"), "")
+    if aircraft.get("category") == "A7" or plane_type in ("R22", "R44", "R66", "H60", "H64", "H47", "UH1", "S76", "S92", "B06", "B407", "B412", "B429", "B505", "EC20", "EC30", "EC35", "EC45", "EC55", "AS50", "AS55", "AS65", "MD50", "MD52", "MD60"):
+        return "helicopter"
+    if plane_type in ("C130", "C30J", "P3", "A400"):
+        return "fourprop"
+    if plane_type in ("AT43", "AT45", "AT72", "AT73", "AT75", "AT76", "DH8A", "DH8B", "DH8C", "DH8D", "DHC6", "BE20", "BE30", "BE58", "B350", "B190", "PA31", "PA34", "PA44", "DA42", "DA62", "C310", "C340", "C402", "C414", "C421", "SW4", "SF34", "E120"):
+        return "twinprop"
+    if plane_type in ("C150", "C152", "C162", "C170", "C172", "C177", "C180", "C182", "C185", "C206", "C207", "C208", "P28A", "P28B", "P28R", "PA18", "PA32", "DA20", "DA40", "SR20", "SR22", "PC12", "TBM7", "TBM8", "TBM9", "BE36", "RV7", "RV8", "RV9", "RV10", "DHC2"):
+        return "prop"
+    if plane_type in ("F15", "F16", "F18", "F18H", "F22", "F35", "A10", "EUFI", "RFAL"):
+        return "fighter"
+    for prefix in ("GLF", "LJ", "FA", "CL3", "CL6", "C25", "C50", "C51", "C52", "C55", "C56", "C65", "C68", "C70", "C750", "E50P", "E55P", "BE40"):
+        if plane_type.startswith(prefix):
+            return "bizjet"
+    for prefix in ("A34", "A38", "B74"):
+        if plane_type.startswith(prefix):
+            return "jumbo"
+    for prefix in ("A33", "A35", "B76", "B77", "B78"):
+        if plane_type.startswith(prefix):
+            return "widebody"
+    for prefix in ("A31", "A32", "A20", "A21", "B73", "B37", "B38", "B39", "B3X", "B71", "B72", "B75", "BCS", "E17", "E19", "E29", "CRJ", "MD8", "MD9", "DC9"):
+        if plane_type.startswith(prefix):
+            return "airliner"
+    return "generic"
+
+def aircraft_icon(aircraft):
+    colors = {".": BG, "1": WHITE, "2": CYAN, "3": AMBER}
+    return render.Column(children = [
+        render.Row(children = [render.Box(width = 1, height = 1, color = colors[pixel]) for pixel in row.elems()])
+        for row in ICON_PIXELS[aircraft_kind(aircraft)]
+    ])
+
+def fitted_text(text, color, font = "tb-8", max_width = 62):
     widget = render.Text(text, color = color, font = font)
-    if widget.size()[0] <= 62:
+    if widget.size()[0] <= max_width:
         return widget
 
     # Long callsigns and registrations remain readable in the smaller font.
     widget = render.Text(text, color = color, font = "tom-thumb")
-    if widget.size()[0] <= 62:
+    if widget.size()[0] <= max_width:
         return widget
-    return render.Text(text[:14] + ".", color = color, font = "tom-thumb")
+    return render.Text(text[:max(1, int(max_width / 4) - 1)] + ".", color = color, font = "tom-thumb")
 
 def screen(title, primary, middle, bottom, primary_color = AMBER):
     return render.Box(
@@ -197,12 +404,17 @@ def status_screen(primary, middle, bottom = "", error = False):
 
 def aircraft_display(aircraft, details = True, demo = False):
     plane_type = short_text(aircraft.get("t"), "TYPE ?", limit = 8)
-    pages = [screen(
-        "SKY WATCH DEMO" if demo else "SKY WATCH",
-        label(aircraft),
-        "%s %s" % (plane_type, altitude_text(aircraft)),
-        "%sNM %s" % (fixed_decimal(aircraft["_distance_nm"]), speed_text(aircraft)),
-    )]
+    pages = [render.Box(width = 64, height = 32, color = BG, child = render.Column(children = [
+        render.Box(width = 64, height = 7, color = HEADER, child = render.Text("SKY WATCH DEMO" if demo else "SKY WATCH", font = "CG-pixel-3x5-mono", color = CYAN)),
+        render.Row(children = [
+            render.Column(children = [
+                render.Box(width = 40, height = 9, child = fitted_text(label(aircraft), AMBER, max_width = 38)),
+                render.Box(width = 40, height = 8, child = fitted_text(altitude_text(aircraft), WHITE, font = "tom-thumb", max_width = 38)),
+            ]),
+            render.Box(width = 24, height = 17, child = aircraft_icon(aircraft)),
+        ]),
+        render.Box(width = 64, height = 8, child = fitted_text("%sNM %s" % (fixed_decimal(aircraft["_distance_nm"]), speed_text(aircraft)), CYAN, font = "tom-thumb")),
+    ]))]
     if details:
         pages.append(screen(
             "DEMO DETAILS" if demo else "DETAILS",
@@ -233,7 +445,7 @@ def main(config):
         return aircraft_display({
             "flight": "AAL1234",
             "r": "N38257",
-            "t": "B738",
+            "t": config.get("demo_type", "B738"),
             "gs": 421,
             "track": 270,
             "alt_baro": 26700,

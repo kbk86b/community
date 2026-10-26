@@ -91,6 +91,23 @@ def main(config):
     assert.eq(display_payload({"ac": [], "now": 1000}, point, 10, True, True, 1000), [])
     assert.eq(len(get_schema().fields), 4)
     print("PASS: 47 Starlark assertions")
+    type_cases = [
+        ("B738", "airliner"), ("A320", "airliner"), ("B38M", "airliner"),
+        ("A333", "widebody"), ("B77W", "widebody"), ("B744", "jumbo"),
+        ("A388", "jumbo"), ("C172", "prop"), ("C208", "prop"),
+        ("BE20", "twinprop"), ("AT76", "twinprop"), ("C130", "fourprop"),
+        ("GLF6", "bizjet"), ("F16", "fighter"), ("R44", "helicopter"),
+        ("H60", "helicopter"), ("UNKNOWN", "generic"),
+    ]
+    for code, expected in type_cases:
+        assert.eq(aircraft_kind({"t": code}), expected)
+    assert.eq(aircraft_kind({"category": "A7"}), "helicopter")
+    assert.eq(len(ICON_PIXELS), 10)
+    for rows in ICON_PIXELS.values():
+        assert.eq(len(rows), 15)
+        for row in rows:
+            assert.eq(len(row), 24)
+    print("PASS: 17 aircraft type cases, rotorcraft fallback, and 10 pixel silhouettes")
     return sky_watch_main({"demo": "true"})
 '''
 
@@ -103,7 +120,9 @@ def main():
                        encoding="utf-8")
     result = render(harness, "unit-tests")
     assert "PASS: 47 Starlark assertions" in result
+    assert "PASS: 17 aircraft type cases" in result
     print("PASS: 47 assertions executed in the native Starlark runtime")
+    print("PASS: 17 aircraft type cases, rotorcraft fallback, and 10 pixel silhouettes")
     requests = []
     responses = {
         "aircraft": (200, {"ac": [{"flight": "TEST123", "r": "N123AB", "t": "A320",
@@ -166,6 +185,9 @@ def main():
     render(APP / "sky_watch.star", "not-configured")
     render(APP / "sky_watch.star", "demo", "demo=true")
     print("PASS: default setup state and offline demo render")
+    for code in ("B738", "B77W", "B744", "C172", "BE20", "C130", "GLF6", "F16", "R44", "UNKNOWN"):
+        render(APP / "sky_watch.star", "icon-" + code, "demo=true", "demo_type=" + code)
+    print("PASS: all ten silhouette families rendered in the native aircraft screen")
     print("All native checks passed. No saved settings or Tidbyt token used.")
 
 

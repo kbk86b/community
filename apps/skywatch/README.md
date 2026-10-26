@@ -1,10 +1,17 @@
 # Sky Watch
 
 Sky Watch displays the closest recently reported airborne aircraft within a
-chosen radius. The first page shows callsign, ICAO aircraft type, altitude,
-ground distance, and ground speed. An optional second page shows registration,
+chosen radius. The first page shows a simple aircraft silhouette, callsign,
+altitude, ground distance, and ground speed. An optional second page shows registration,
 type, and heading. Altitude is in feet, speed in knots, and radius in nautical
 miles. Missing identity fields use registration or transponder hex as fallbacks.
+
+Ten original pixel silhouettes cover airliners, twin-engine widebodies,
+four-engine jets, single/twin/four-engine propeller aircraft, business jets,
+fighters, helicopters, and a generic fallback. Common ICAO type codes select
+the family; ADS-B rotorcraft category is also recognized. These are simple
+family illustrations rather than exact model drawings. Unrecognized types use
+the generic silhouette, and the exact reported type code remains on the details page.
 
 Select a location and a radius of 5, 10, 20, 30, or 50 NM in the Tidbyt phone app.
 Choose whether to show the details page or hide the app when no aircraft are
@@ -54,7 +61,8 @@ The `demo=true` developer parameter renders a labeled synthetic example without
 network access. It is not exposed in the published phone app settings. Without
 location configuration, the app renders SET LOCATION and makes no HTTP request.
 
-The native regression tests run 47 assertions inside Pixlet and render seven
+The native regression tests run 47 core assertions plus aircraft-family and
+silhouette checks inside Pixlet, and render seven
 synthetic HTTP cases using a temporary loopback server. Python 3.10+ is needed
 only to run these tests; the deployed app runs in Starlark without Python.
 
